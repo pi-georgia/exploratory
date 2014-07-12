@@ -16,8 +16,8 @@ md$Global_active_power<-as.numeric(md$Global_active_power)
 
 #subset
 
-small_md<-subset(md, Date >="2007/02/01", select=c(Date,Time, Global_active_power), na.omit())
-small_md<-subset(small_md, Date <= "2007/02/02", select=c(Date,Time, Global_active_power))
+small_md<-subset(md, Date >="2007/02/01", select=c(Date,Time, Sub_metering_1, Sub_metering_2, Sub_metering_3), na.omit())
+small_md<-subset(small_md, Date <= "2007/02/02", select=c(Date,Time,  Sub_metering_1, Sub_metering_2, Sub_metering_3))
 
 library(datasets)
 
