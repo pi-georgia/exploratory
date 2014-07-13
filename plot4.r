@@ -7,18 +7,29 @@ thetab<- read.table(filename, sep=";", na.strings="?", header=TRUE,  stringsAsFa
 md=data.frame(thetab)
 md<-droplevels(md)
 
+
+
+#create dates
+dat<-strptime(paste(md$Date,md$Time,sep=" "),format='%Y-%m-%d %H:%M:%S')
+
 #convert types
-
-dat<-strptime(paste(md$Date,md$Time,sep=" "),format='%d/%m/%Y %H:%M:%S')
-
 md$Date<-as.Date(md$Date, "%d/%m/%Y")
 md$Global_active_power<-as.numeric(md$Global_active_power)
 
-#subset
+#subset data
 
-small_md<-subset(md, Date >="2007/02/01", select=c(Date,Time, Global_active_power, Voltage, Global_reactive_power, Sub_metering_1, Sub_metering_2, Sub_metering_3), na.omit())
-small_md<-subset(small_md, Date <= "2007/02/02", select=c(Date,Time, Global_active_power, Voltage, Global_reactive_power, Sub_metering_1, Sub_metering_2, Sub_metering_3))
+small_md<-subset(md, Date >="2007-01-02", select=c(Date,Time,Voltage, Global_active_power, Global_reactive_power, Sub_metering_1, Sub_metering_2, Sub_metering_3), drop=TRUE)
 
+#get pointer for date table
+first_line<- nrow(md)-nrow(small_md)
+
+small_md<-subset(small_md, Date <= "2007-02-02", select=c(Date,Time,  Sub_metering_1, Sub_metering_2, Sub_metering_3))
+
+#get pointer for date table
+last_line<-first_line+ nrow(small_md)-1
+
+#create date table
+dat<-dat[first_line: last_line]
 
 library(datasets)
 par(mfrow=c(2,2))
@@ -41,6 +52,6 @@ lines(dat,small_md$Sub_metering_3,col="blue")
 # plot new stuff
 plot(dat,small_md$Global_reactive_power,type="l",xlab="datetime",ylab="Global_reactive_power")
 
-#create png file and close device
 dev.copy(png,file="plot4.png")
 dev.off()
+
